@@ -1,4 +1,5 @@
-#pragma ones
+#pragma once
+
 /**
  * @file sparse_matrix.h
  * @brief SparseVector, SparseMatrix, Proxy classes implementations
