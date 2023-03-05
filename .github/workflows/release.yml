@@ -1,4 +1,4 @@
-name: 'C++ CI'
+name: 'Otus C++ Prof homework 6'
 
 on:
   push:
@@ -34,6 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./print_ip-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: print_ip-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./spm-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: spm-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package

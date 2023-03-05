@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(matrix VERSION ${PROJECT_VESRION})
+project(spm VERSION ${PROJECT_VESRION})
 
 # ++for google test
 include(FetchContent)   # run ..\CMake\share\cmake-X.YY\Modules\FetchContent.cmake
@@ -24,26 +24,26 @@ if(NOT googletest_POPULATED)
 endif()
 
 enable_testing()    # Enables testing for this directory and below
-add_executable(matrix matrix_test.cpp)
+add_executable(spm matrix_test.cpp)
 target_link_libraries(matrix_test GTest::gtest_main)
 # --for google test
 
-add_executable(matrix matrix.cpp) # target source ...
+add_executable(spm spm.cpp) # target source ...
 
-set_target_properties(matrix PROPERTIES    # target PROPERTIES prop1 value1  ...
+set_target_properties(spm PROPERTIES    # target PROPERTIES prop1 value1  ...
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
-target_include_directories(matrix
+target_include_directories(spm
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
 if (MSVC)
-    target_compile_options(matrix PRIVATE
+    target_compile_options(spm PRIVATE
         /W4
     )
 else ()
-    target_compile_options(matrix PRIVATE
+    target_compile_options(spm PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
 endif()
@@ -53,7 +53,7 @@ include(GoogleTest)               # run ..\CMake\share\cmake-X.YY\Modules\Google
 gtest_discover_tests(matrix_test)  # discover tests by asking the compiled test executable to enumerate its tests
 # ++for google test
 
-install(TARGETS matrix matrix_test RUNTIME DESTINATION bin)
+install(TARGETS spm matrix_test RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 
