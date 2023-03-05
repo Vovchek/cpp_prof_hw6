@@ -21,6 +21,12 @@ class Proxy;
 template <typename V, V def_val = 0>
 class SparseMatrix;
 
+/**
+ * @brief Proxy for SparseVector to discer cell write or read
+ * 
+ * @tparam V 
+ * @tparam def_val 
+ */
 template <typename V, V def_val>
 class Proxy
 {
