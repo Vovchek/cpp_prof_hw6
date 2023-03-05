@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-# GoogleTest requires at least C++17
+# GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 17)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
@@ -24,7 +24,7 @@ if(NOT googletest_POPULATED)
 endif()
 
 enable_testing()    # Enables testing for this directory and below
-add_executable(spm matrix_test.cpp)
+add_executable(matrix_test matrix_test.cpp)
 target_link_libraries(matrix_test GTest::gtest_main)
 # --for google test
 
