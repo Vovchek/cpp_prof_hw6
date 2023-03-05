@@ -1,4 +1,15 @@
 #pragma ones
+/**
+ * @file sparse_matrix.h
+ * @brief SparseVector, SparseMatrix, Proxy classes implementations
+ * @author Vladimir Chekal
+ * @date March 2023
+ * @details
+ * SparseVector is a std::map based template class intended to store very large sparse vectors
+ * while storing only cell values different from the default one.
+ * Cell type and a default value are template parameters.
+*/
+
 
 #include <map>
 

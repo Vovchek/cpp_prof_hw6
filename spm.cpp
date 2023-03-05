@@ -54,7 +54,7 @@ for(auto c: matrix) {
 */
 
 #include <iostream>
-#include "sparce_matrix.h"
+#include "sparse_matrix.h"
 
 
 int main()
