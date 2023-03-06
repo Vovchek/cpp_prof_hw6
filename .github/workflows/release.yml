@@ -38,7 +38,7 @@ jobs:
           asset_name: spm-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
   build_doc:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Run Doxygen
         uses: mattnotmitt/doxygen-action@v1.2.1

@@ -24,8 +24,13 @@ class SparseMatrix;
 /**
  * @brief Proxy for SparseVector to discer cell write or read
  * 
- * @tparam V 
- * @tparam def_val 
+ * @tparam V cell type
+ * @tparam def_val default value for cells
+ * 
+ * @details
+ * SparseVector returns this Proxy when operator [] is envoked.\n
+ * If the caller needs write access (like v[i] = value) it employes operator = ,\n
+ * otherwise (like var = v[i]) const typecast V() operator reurns cell value (or default).
  */
 template <typename V, V def_val>
 class Proxy
@@ -34,9 +39,11 @@ public:
     using vector_type = SparseVector<V, def_val>;
     using proxy_type = Proxy<V, def_val>;
 
-    Proxy(vector_type *v, int i) : pv{v}, idx{i} {} ///< consructor 
-    ~Proxy() = default;     ///< destructor
-    V operator=(const V &v) ///< cell value assignment operator. lvalue operator[] envoked, update map if nessesery
+    Proxy(vector_type *v, int i) : pv{v}, idx{i} {}     ///< consructor. @param v pointer to SparseVector that returned this Proxy, @param i index of a cell.
+    
+    ~Proxy() = default;                                 ///< destructor.
+    
+    V operator=(const V &v)                             ///< cell value assignment operator. lvalue operator[] envoked, update map if nessesery.
     {   
         if (v == def_val) // putting Default value in cell
         {                 // if key 'idx' is in map, then remove it
@@ -49,14 +56,13 @@ public:
         return v;
     }
 
-    operator V() const ///< cell value type cast operator. rvalue operator[] envoked, return the existing or Default value
+    operator V() const ///< cell value type cast operator.\n rvalue operator[] envoked, return the existing or Default value.
     {
         return pv->get_value(idx);
     }
 
-    proxy_type &operator=(const proxy_type &rhv) ///< 
+    proxy_type &operator=(const proxy_type &rhv) ///< xvalue operator[], update & return this proxy.
     {
-        // xvalue operator[], update & return this proxy
         if (&rhv != this)
         {
             operator=(V(rhv));
@@ -65,10 +71,24 @@ public:
     };
 
 private:
-    vector_type *pv{nullptr};
+    vector_type *pv{nullptr}; ///< pointer to Proxy creator SparseVector.
     int idx{-1};
 };
 
+/**
+ * @brief SparseVector class that stores only non-default cell values.
+ * 
+ * @tparam V cell type.
+ * @tparam def_val default value for cells.
+ * 
+ * @details
+ * SparseVector stores cell values that are not dafault in std::map container
+ * with the key equal to the cell index and data storing corresponding cell value.\n
+ * When default value is written to the cell that contained non-default value beforehand,
+ * then the corresponding element is erased from the map.\n
+ * In contrary, when non-default value is written to empty cell, then new element is
+ * inserted into map.
+*/
 template <typename V, V def_val>
 class SparseVector
 {
@@ -166,13 +186,19 @@ public:
         V v;
     };
 
+    /**
+     * @brief Forward iterator along non-default cells of a SparseMatrix
+    */
     class iterator
     {
 
-        matrix_data_type *data_ptr{nullptr};
-        pos_type cur_pos{-1, -1};
+        matrix_data_type *data_ptr{nullptr}; ///< pointer to the map data of the SparseMatrix to iterate
+        pos_type cur_pos{-1, -1};   ///< current position of the iterator
 
     public:
+        
+        /// iterator traits
+
         using value_type = ret_type;
         using pointer = ret_type *;
         using reference = ret_type &;
@@ -180,10 +206,8 @@ public:
 
         iterator(matrix_data_type *pm, const pos_type &&p) : data_ptr{pm}, cur_pos{p} {}
         iterator(matrix_data_type *pm, int row, int col) : data_ptr{pm}, cur_pos{row, col} {}
-        // iterator(const pos_type &p) : cur_pos(p) {}
-        // iterator(const matrix_data_type::iterator  &it_row, const vector_data_type::iterator &it_col) : cur_pos{it_row, it_col} {}
-
         iterator(const iterator &it) : data_ptr{it.data_ptr}, cur_pos{it.cur_pos} {}
+
         bool operator!=(const iterator &other)
         {
             return data_ptr != other.data_ptr || cur_pos.i != other.cur_pos.i || cur_pos.j != other.cur_pos.j;
@@ -232,6 +256,9 @@ public:
         }
     }; // iterator
 
+    /**
+     * returns iterator that points to the first non-empty cell
+    */
     iterator begin() {
         pack(); // remove garbage
         auto it = data.begin();
@@ -240,5 +267,8 @@ public:
         // there should be no empty SparseVectors
         return iterator(&data, it->first, it->second.begin()->first);
     }
+    /**
+     * returns iterator that points past the last non-empty cell
+    */
     iterator end() { return iterator(&data, -1, -1); }
 };
