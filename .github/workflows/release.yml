@@ -5,11 +5,14 @@ on:
     branches:
       - main
       - feature/github_actions
+  # позволяет запускать workflow вручную с вкладки actions в интерфейсе github.com
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # при выполнении задания будет доступен наш репозиторий
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -40,8 +43,12 @@ jobs:
   build_doc:
     runs-on: ubuntu-latest
     steps:
+      # при выполнении задания будет доступен наш репозиторий, вызвает git fetch
+      - uses: actions/checkout@v2
+
       - name: Run Doxygen
         uses: mattnotmitt/doxygen-action@v1.2.1
+      
       - name: Pages Deployment
         uses: peaceiris/actions-gh-pages@v3
         with:
