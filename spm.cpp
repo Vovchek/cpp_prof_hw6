@@ -87,7 +87,7 @@ for(auto c : sm) {
     std::cout << c.i << c.j << c.v << std::endl; 
 }
 
-// * optionally implement N-dim matrix
+// * optionally implement N-dimensioned matrix
 
 /// unfortunately, it probably requires too much effort to
 /// increase the number of dimensions using current implementation
