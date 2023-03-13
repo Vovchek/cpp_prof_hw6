@@ -87,6 +87,15 @@ for(auto c : sm) {
     std::cout << c.i << c.j << c.v << std::endl; 
 }
 
+// check how the SparseMatrix frees the space when its cells are reset to default.
+/*
+for(int i = 0; i <= 9; ++i) {
+    sm[i][i] = 0;
+    sm[i][9 - i] = 0;
+    std::cout << "Reset row " << i << ", sm.size() = " << sm.size() << ", sm.nrows() = " << sm.nrows() << std::endl;
+}
+*/
+
 // * optionally implement N-dimensioned matrix
 
 /// unfortunately, it probably requires too much effort to

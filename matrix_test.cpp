@@ -1,76 +1,107 @@
 #include <gtest/gtest.h>
 #include "sparse_matrix.h"
 
-#define def_val -777
+const int def_val = -777;
 
 class SparseMatrixTest : public ::testing::Test
 {
 protected:
     SparseVector<int, def_val> sv;
-    SparseMatrix<int, 0> sm;
+    SparseMatrix<int, def_val> sm;
 
     void SetUp() override
     {
-        for (int i = 0; i <= 9; ++i)
-        {
-            sm[i][i] = i;
-            sm[i][9 - i] = 9 - i;
-        }
     }
     // void tearDown() override {}
 };
 
 TEST_F(SparseMatrixTest, TestVectorInsert)
 {
+    EXPECT_EQ(sv.size(), 0);
     for (int i = 0; i < 10; ++i)
     {
-        EXPECT_EQ(sv.size(), i);
         auto idx = i * i * i * i, v = idx + 1111;
         EXPECT_EQ(sv[idx], def_val);
         sv[idx] = v;
         EXPECT_EQ(sv[idx], v);
+        EXPECT_EQ(sv.size(), i + 1);
     }
-    EXPECT_EQ(sv.size(), 10);
 }
 
-TEST_F(SparseMatrixTest, TestVectorRemove)
+TEST_F(SparseMatrixTest, TestVectorFreeUnused)
 {
     for (int i = 0; i < 10; ++i)
     {
-        auto idx = i * i * i * i;
-        auto sz = sv.size();
-        sv[idx] = def_val;
-        EXPECT_EQ(sv[idx], def_val);
-        //EXPECT_EQ(sv.size(), sz - 1);
+        auto idx = i * i * i * i, v = idx + 1111;
+        sv[idx] = v;
     }
-}
 
-TEST_F(SparseMatrixTest, TestMatrixFillDiags)
-{
-    for (int i = 1; i <= 8; ++i)
+    EXPECT_EQ(sv.size(), 10);
+
+    for (int i = 0; i < 10; ++i)
     {
-        for (int j = 1; j <= 8; ++j)
+        auto idx = i * i * i * i;
+        sv[idx] = def_val;
+        EXPECT_EQ(sv.size(), 9 - i);
+    }
+}
+
+TEST_F(SparseMatrixTest, TestMatrixDiags)
+{
+
+    for (int i = 0; i <= 9; ++i)
+    {
+        sm[i][i] = i;
+        sm[i][9 - i] = 9 - i;
+    }
+    for (int i = 0; i <= 9; i++)
+    {
+        for (int j = 0; j <= 9; j++)
         {
-            if (j == i)
-            EXPECT_EQ(sm[i][j], i);
-            else if(j == 9-i)
-            EXPECT_EQ(sm[i][j], j);
+            if (i == j)
+                EXPECT_EQ(sm[i][j], i);
+            else if (j == 9 - i)
+                EXPECT_EQ(sm[i][j], 9 - i);
             else
-            EXPECT_EQ(sm[i][j], 0);
+                EXPECT_EQ(sm[i][j], def_val);
         }
-        std::cout << std::endl;
+    }
+}
+
+TEST_F(SparseMatrixTest, TestMatrixIterator)
+{
+    for (int i = 0; i <= 9; ++i)
+    {
+        sm[i][i] = i;
+        sm[i][9 - i] = 9 - i;
     }
 
+    auto sz = sm.size();
+
+    for (auto c : sm)
+    {
+        EXPECT_EQ(sm[c.i][c.j], c.v);
+        --sz;
+    }
+    EXPECT_EQ(sz, 0);
 }
 
-TEST_F(SparseMatrixTest, TestMatrixSize)
+TEST_F(SparseMatrixTest, TestMatrixFreeUnused)
 {
-    EXPECT_EQ(sm.size(), 18);
-}
+    for (int i = 0; i <= 9; ++i)
+    {
+        sm[i][i] = i;
+        sm[i][9 - i] = 9 - i;
+    }
 
-TEST_F(SparseMatrixTest, TestMatrixIterate)
-{
-}
-TEST_F(SparseMatrixTest, TestMatrixRemove)
-{
+    auto sz = sm.size();
+    auto nr = sm.nrows();
+    for (int i = 0; i <= 9; ++i)
+    {
+        sm[i][i] = def_val;
+        EXPECT_EQ(--sz, sm.size());
+        sm[i][9 - i] = def_val;
+        EXPECT_EQ(--sz, sm.size());
+        EXPECT_EQ(--nr, sm.nrows());
+    }
 }
